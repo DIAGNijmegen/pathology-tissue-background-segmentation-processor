@@ -190,6 +190,9 @@ def main(
     output_images_file_path = '/output/{image}.tif',
     work_directory = '/home/user/work',
     model_path = DEFAULT_MODEL_FILE,
+    input_spacing_um = 2.0,
+    output_spacing_um = 2.0,
+    spacing_tolerance = 0.25
 ):
     """
     Main function.
@@ -197,10 +200,6 @@ def main(
     Returns:
         int: Error code.
     """
-
-    # Settings.
-    #
-
 
     # Read the configuration files.
     #
@@ -217,9 +216,9 @@ def main(
     print('Normalizer source range: {source}'.format(source=config['normalizer_source_range']))
     print('Normalizer target range: {target}'.format(target=config['normalizer_target_range']))
     print('Soft mode: {flag}'.format(flag=config['soft_mode']))
-    print('Input pixel spacing: {spacing} um'.format(spacing=config['input_spacing']))
-    print('Output pixel spacing: {spacing} um'.format(spacing=config['output_spacing']))
-    print('Pixel spacing tolerance: {tolerance}'.format(tolerance=config['spacing_tolerance']))
+    print('Input pixel spacing: {spacing} um'.format(spacing=input_spacing_um))
+    print('Output pixel spacing: {spacing} um'.format(spacing=output_spacing_um))
+    print('Pixel spacing tolerance: {tolerance}'.format(tolerance=spacing_tolerance))
     print('Unrestrict network: {flag}'.format(flag=config['unrestrict_network']))
     print('Input channels: {channels}'.format(channels=config['input_channels']))
     print('Padding mode: \'{mode}\''.format(mode=config['padding_mode']))
@@ -256,9 +255,9 @@ def main(
             normalizer_source_range=config['normalizer_source_range'],
             normalizer_target_range=config['normalizer_target_range'],
             soft_mode=config['soft_mode'],
-            input_spacing=config['input_spacing'],
-            output_spacing=config['output_spacing'],
-            spacing_tolerance=config['spacing_tolerance'],
+            input_spacing=input_spacing_um,
+            output_spacing=output_spacing_um,
+            spacing_tolerance=spacing_tolerance,
             unrestrict_network=config['unrestrict_network'],
             input_channels=config['input_channels'],
             padding_mode=config['padding_mode'],
@@ -304,13 +303,19 @@ def cli():
     parser.add_argument("input_file_pattern", type=str, help="Input file pattern. Accepts wildcards '*'.")
     parser.add_argument("output_file_pattern", type=str, help="Output file pattern. Accepts '{image}' pattern for each image matching input file pattern.")
     parser.add_argument("--work-dir", type=str, default="/tmp/gc_wsi_bgseg", help="Directory to store intermediate working files")
+    parser.add_argument("--input-spacing", type=float, default=2.0, help="Desired input spacing in um. Default 2.0")
+    parser.add_argument("--output-spacing", type=float, default=2.0, help="Desired output spacing in um. Default 2.0")
+    parser.add_argument("--spacing-tolerance", type=float, default=0.25, help="Tolerance for the input spacing. Default 0.25")
     args = parser.parse_args()
     return main(
         default_config_path=DEFAULT_CONFIG_FILE,
         input_images_file_path=args.input_file_pattern,
         output_images_file_path=args.output_file_pattern,
         work_directory=args.work_dir,
-        model_path=DEFAULT_MODEL_FILE
+        model_path=DEFAULT_MODEL_FILE,
+        input_spacing_um=args.input_spacing,
+        output_spacing_um=args.output_spacing,
+        spacing_tolerance=args.spacing_tolerance
     )
 
 
